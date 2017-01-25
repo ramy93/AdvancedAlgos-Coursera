@@ -35,7 +35,7 @@ public class App{
 	}
 
 	static void topologicalSort(SCC[] SCCs , Graph graph){
-
+		GraphNode node;
 	}
 	
 	static SCC[] findSCCs(Graph graph){
@@ -59,14 +59,15 @@ public class App{
 class Graph{
 	int size;
 	int offset;
-	ArrayList<HashSet<Integer>> nodes;
+	ArrayList<GraphNode> nodes;
 
 	public Graph(int numNodes){
 		this.size = 2*numNodes;
 		this.offset = numNodes;
-		this.nodes = new ArrayList<HashSet<Integer>>();
-		for (int i = 0 ; i < this.size; i++){
-			this.nodes.add(new HashSet<Integer>());
+		this.nodes = new ArrayList<GraphNode>();
+		for (int i = 1 ; i <= this.size; i++){
+			int nodeId = (i > offset)? -(i - offset) : i; 
+			this.nodes.add(new GraphNode(nodeId));
 		}
 	}
 
@@ -94,20 +95,33 @@ class Graph{
 		return this.offset + Math.abs(index); 
 	}
 	public Set<Integer> getNeighborSet(int v1){
-		return nodes.get(getIndex(v1));	
+		return nodes.get(getIndex(v1)).getNeighbors();	
 	}
 	
-	class GraphNode{
-		int id;
-		HashSet<Integer> neighbors;
+}
+
+class GraphNode{
+		private int id;
+		private HashSet<Integer> neighbors;
 		public GraphNode(int id){
 			this.id = id;	
 			this.neighbors = new HashSet<Integer>();
 		}
-		public void AddNeighbor(int neighbor){
+		public void addNeighbor(int neighbor){
 			this.neighbors.add(neighbor);
 		}
-	}
+		
+		public void add(int neighbor){
+			this.addNeighbor(neighbor);
+		}
+		
+		public Set<Integer> getNeighbors(){
+			return this.neighbors;
+		}
+
+		public int getId(){
+			return this.id;
+		}
 }
 
 class InputReader {
