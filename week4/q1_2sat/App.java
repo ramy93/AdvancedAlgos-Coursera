@@ -1,78 +1,104 @@
+import java.io.*;
+import java.util.*;
+
 public class App{
 
 
-	public int[] getVariableValues(SCC[] SCCs, Graph graph){
+	static int[] getVariableValues(SCC[] SCCs, Graph graph){
 		return new int[graph.getSize()];
 	}
 
-	boolean IsSatisfiable(SCC[] SCCs){
+	static boolean isSatisfiable(SCC[] SCCs){
 		return false;
 	}
 
-	void printVariables(int[] variables){
+	static void printVariables(int[] variables){
 
 		return;
 	}
 
-	Graph buildGraph(){
-		InputReader reader = new InputReader();
+	static Graph buildGraph(){
+		InputReader reader = new InputReader(System.in);
 		int v = reader.nextInt();
 		int c = reader.nextInt();
-		Graph graph = new Graph();
-		for (int i = 1 ; i < = v; i++){
-			graph.addVertex(i);
-			graph.addVertex(-i);
-
-		}
-		int v1;
-		int v2;
+		Graph graph = new Graph(v);
+		int v1, v2;
 		for (int i = 0 ; i < c ; i++){
 			v1 = reader.nextInt();
 			v2 = reader.nextInt();
 
-			graph.addEdge(v1, v2);
+			graph.addImplicationEdges(v1, v2);
 
 		}
 		return graph;
 
 	}
 
-	void topologicalSort(SCC[] SCCs , Graph graph){
+	static void topologicalSort(SCC[] SCCs , Graph graph){
 
 	}
 	
+	static SCC[] findSCCs(Graph graph){
+		return new SCC[1];
+	}	
 	public static void main(String[] args){
 		Graph graph = buildGraph();
 		SCC[] SCCs = findSCCs(graph);
-		bollean satisfiable = IsSatisfiable(SCCs);
+		boolean satisfiable = isSatisfiable(SCCs);
 		if (!satisfiable){
 			System.out.println("UNSATISFIABLE");
-			return
+			return;
 		}
-		int[] variableValues = getVariableValues(SCCs, graph)
+		int[] variableValues = getVariableValues(SCCs, graph);
 
-		printVariables(int[] variables);
+		printVariables(variableValues);
 	}
 }
 
-
+// size must be explicitly given during construction
 class Graph{
 	int size;
-	int [] nodes;
+	int offset;
+	ArrayList<HashSet<Integer>> nodes;
 
 	public Graph(int numNodes){
 		this.size = 2*numNodes;
-		this.nodes = new int[this.size];
+		this.offset = numNodes;
+		this.nodes = new ArrayList<HashSet<Integer>>();
+		for (int i = 0 ; i < this.size; i++){
+			this.nodes.add(new HashSet<Integer>());
+		}
 	}
+
 	int getSize(){
-		return 0;
+		return this.size;
 	}
 	
+	public void addImplicationEdges(int v1 , int v2){
+		if (v1 == v2){
+			this.addEdge(-v1, v1);
+			return;
+		}
+		this.addEdge( -v1 , v2);
+		this.addEdge( -v2, v1);
+	}
 
-
+	private void addEdge(int v1, int v2){
+		this.nodes.get(getIndex(v1)).add(v2);	
+	}
+	
+	private int getIndex(int index){
+		if (index>0){
+			return index;	
+		}
+		return this.offset + Math.abs(index); 
+	}
+	public Set<Integer> getNeighborSet(int v1){
+		return nodes.get(getIndex(v1));	
+	}
 }
 
-static class InputReader {
+class InputReader {
 	public BufferedReader reader;
 	public StringTokenizer tokenizer;
 
@@ -105,6 +131,10 @@ static class InputReader {
 	}
 }
 
+
+class SCC{
+
+}
 // start get input
 //input: first line contatins V C , where V is number of vars, C is number of clauses
 // each of next C clauses contain two variables -> add implication edge (!v1 -> v2 ) and (!v2 -> v1). if v1 = v2, only add edge from !v1 -> v2 (or !v1 -> v2, same thing)
