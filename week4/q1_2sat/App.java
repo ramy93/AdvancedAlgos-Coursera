@@ -96,6 +96,18 @@ class Graph{
 	public Set<Integer> getNeighborSet(int v1){
 		return nodes.get(getIndex(v1));	
 	}
+	
+	class GraphNode{
+		int id;
+		HashSet<Integer> neighbors;
+		public GraphNode(int id){
+			this.id = id;	
+			this.neighbors = new HashSet<Integer>();
+		}
+		public void AddNeighbor(int neighbor){
+			this.neighbors.add(neighbor);
+		}
+	}
 }
 
 class InputReader {
